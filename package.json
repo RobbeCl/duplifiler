@@ -1,14 +1,26 @@
 {
   "name": "duplifiler",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "exports": "./index.js",
   "license": "MIT",
   "module": "node",
   "type": "module",
+  "description": "Identifies files with the same name at the same path with different extensions",
+  "bugs": "https://github.com/RobbeCl/duplifiler/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobbeCl/duplifiler.git"
+  },
+  "homepage": "https://github.com/RobbeCl/duplifiler",
   "author": {
     "name": "Robbe Claessens",
     "url": "https://github.com/RobbeCl"
   },
+  "keywords": [
+    "duplicate",
+    "files",
+    "extension"
+  ],
   "files": [
     "!test/**/*",
     "lib",
