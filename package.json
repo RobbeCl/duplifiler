@@ -34,7 +34,8 @@
   "dependencies": {
     "commander": "^9.1.0",
     "defaults": "^1.0.3",
-    "globby": "^13.1.1"
+    "globby": "^13.1.1",
+    "read-package-json": "^5.0.0"
   },
   "devDependencies": {
     "debug": "^4.3.4",
