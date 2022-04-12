@@ -1,10 +1,12 @@
+#!/usr/bin/env node
+
 import { program } from "commander";
 import { Matcher } from "./lib/index.js";
 import { debugLog } from "./lib/debug.js";
 
 program
   .version("1.0.0")
-  .name("find-duplicate-name")
+  .name("duplifiler")
   .description(
     "A CLI tool which lists you files with the same name but a different extension"
   )
