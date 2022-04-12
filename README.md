@@ -6,4 +6,4 @@ I use it to find files which are both javascript and typescript files in the sam
 
 ## Usage
 
-`npx duplifiler --extensions .js,.ts --ignore_pattern "**/node_modules/**" -p .
+`npx duplifiler --extensions .js,.ts --ignore_pattern "**/node_modules/**" -p .`
