@@ -1,68 +1,39 @@
-const { cwd } = require("process");
-const {
-  promises: { readdir },
-} = require("fs");
-const { flatten } = require("lodash");
-const path = require("path");
+const program = require("commander");
+const { Crawler } = require("./lib");
+const { debugLog } = require("./lib/debug");
 
-const getDirectories = async (source) =>
-  (await readdir(source, { withFileTypes: true }))
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name);
+program
+  .version("1.0.0")
+  .name("find-duplicate-name")
+  .description(
+    "A CLI tool which lists you files with the same name but a different extension"
+  )
+  .requiredOption("-e,--extensions [extensions]", "Extension seperated list")
+  .requiredOption("-p,--path [path]", "Path to scan")
+  .option(
+    "--ignore_pattern [folder]",
+    "Pattern of folders to ignore in the search"
+  )
+  .parse(process.argv);
 
-const getFiles = async (source) =>
-  (await readdir(source, { withFileTypes: true }))
-    .filter((dirent) => dirent.isFile())
-    .map((dirent) => dirent.name);
+(async () => {
+  try {
+    // Use current working dir vs __dirname where this code lives
+    const pathToScan = program.opts().path;
 
-const ignore_list = ["node_modules"];
-const check_extensions = [".js", ".ts"];
+    // Use user input or default options
 
-async function crawlDir(currentPath) {
-  const [foldersInsideDir, filesInsideDir] = await Promise.all([
-    getDirectories(currentPath),
-    getFiles(currentPath),
-  ]);
+    const extensions = program.opts().extensions;
 
-  const results = flatten(
-    await Promise.all(
-      foldersInsideDir.map(async (folder) => {
-        if (ignore_list.includes(folder)) {
-          return [];
-        }
-        return crawlDir(`${currentPath}/${folder}`);
-      })
-    )
-  );
-
-  // Do the current directory
-  filesInsideDir.forEach((_toSearchFile) => {
-    filesInsideDir.forEach((_loopFile) => {
-      if (!check_extensions.includes(path.parse(_toSearchFile).ext)) {
-        return;
-      }
-      if (!check_extensions.includes(path.parse(_loopFile).ext)) {
-        return;
-      }
-
-      if (_toSearchFile === _loopFile) {
-        return;
-      }
-
-      if (path.parse(_toSearchFile).name === path.parse(_loopFile).name) {
-        results.push([
-          `${currentPath}/${_toSearchFile}`,
-          `${currentPath}/${_loopFile}`,
-        ]);
-      }
+    const cralwer = new Crawler({
+      extensions,
+      ignore_list: ["**/node_modules/**"],
     });
-  });
 
-  return results;
-}
-
-crawlDir(cwd()).then((results) => {
-  console.log(results);
-
-  console.log(`Total: ${results.length}`);
-});
+    debugLog(`Starting search at ${pathToScan}`);
+    const results = await cralwer.crawlDir(pathToScan, extensions.split(","));
+    cralwer.printResults(results);
+  } catch (error) {
+    console.log(error);
+  }
+})();
