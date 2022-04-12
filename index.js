@@ -1,6 +1,6 @@
-const program = require("commander");
-const { Crawler } = require("./lib");
-const { debugLog } = require("./lib/debug");
+import { program } from "commander";
+import { Matcher } from "./lib/index.js";
+import { debugLog } from "./lib/debug.js";
 
 program
   .version("1.0.0")
@@ -11,7 +11,7 @@ program
   .requiredOption("-e,--extensions [extensions]", "Extension seperated list")
   .requiredOption("-p,--path [path]", "Path to scan")
   .option(
-    "--ignore_pattern [folder]",
+    "--ignore_pattern [ignore_pattern]",
     "Pattern of folders to ignore in the search"
   )
   .parse(process.argv);
@@ -23,16 +23,14 @@ program
 
     // Use user input or default options
 
-    const extensions = program.opts().extensions;
-
-    const cralwer = new Crawler({
-      extensions,
-      ignore_list: ["**/node_modules/**"],
+    const matcher = new Matcher({
+      extensions: program.opts().extensions,
+      ignore_pattern_list: program.opts().ignore_pattern,
     });
 
     debugLog(`Starting search at ${pathToScan}`);
-    const results = await cralwer.crawlDir(pathToScan, extensions.split(","));
-    cralwer.printResults(results);
+    const results = await matcher.matchPatterns(pathToScan);
+    matcher.printResults(results);
   } catch (error) {
     console.log(error);
   }
